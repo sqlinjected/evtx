@@ -1,7 +1,7 @@
 """Rule-based baseline detections.
 
-These are the week 1 baseline. Week 2 adds embedding-based anomaly scoring on
-top, and the README can then compare the two.
+These are the keyword baseline. anomaly.py adds MiniLM scoring on top of the
+service install findings, and the README compares the two.
 """
 
 from __future__ import annotations
@@ -28,12 +28,16 @@ class Finding:
     severity: str  # low / medium / high
     summary: str
     events: list[Event] = field(default_factory=list)
+    anomaly: float | None = None  # set by anomaly.apply for service installs
+    note: str = ""
 
     def to_dict(self) -> dict:
         return {
             "rule": self.rule,
             "severity": self.severity,
             "summary": self.summary,
+            "anomaly": self.anomaly,
+            "note": self.note,
             "event_count": len(self.events),
             "first_seen": self.events[0].timestamp if self.events else None,
             "last_seen": self.events[-1].timestamp if self.events else None,
@@ -129,7 +133,13 @@ def detect_log_clears(events: list[Event]) -> list[Finding]:
     ]
 
 
+SEVERITY_ORDER = {"high": 0, "medium": 1, "low": 2}
+
+
+def sort_findings(findings: list[Finding]) -> list[Finding]:
+    return sorted(findings, key=lambda f: SEVERITY_ORDER[f.severity])
+
+
 def run_all(events: list[Event]) -> list[Finding]:
-    order = {"high": 0, "medium": 1, "low": 2}
     findings = detect_log_clears(events) + detect_failed_logons(events) + detect_service_installs(events)
-    return sorted(findings, key=lambda f: order[f.severity])
+    return sort_findings(findings)

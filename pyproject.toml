@@ -4,14 +4,15 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "evtx-triage"
-version = "0.1.0"
+version = "0.2.0"
 description = "Offline Windows event log triage with small on-device models"
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.10"
-dependencies = ["evtx>=0.8"]
+dependencies = ["evtx>=0.8", "numpy>=1.24"]
 
 [project.optional-dependencies]
+ml = ["fastembed>=0.4"]
 dev = ["pytest>=8"]
 
 [project.scripts]
