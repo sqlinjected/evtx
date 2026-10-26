@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+.pytest_cache/
+# real logs can contain usernames, hostnames and IPs; keep them out of the public repo
+samples/*.evtx
+models/
+*.gguf
